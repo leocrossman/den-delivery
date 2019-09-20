@@ -15,6 +15,7 @@ import {
 import { MonoText } from '../components/StyledText';
 
 import t from 'tcomb-form-native';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 
 const Form = t.form.Form;
 
@@ -27,6 +28,31 @@ const Order = t.struct({
 
 const formStyles = {
   ...Form.stylesheet,
+  textbox: {
+    // the style applied without errors
+    normal: {
+      color: '#000000',
+      fontSize: 17,
+      height: 36,
+      padding: 7,
+      borderRadius: 4,
+      borderColor: '#cccccc', // <= relevant style here
+      borderWidth: 1,
+      marginBottom: 5,
+    },
+
+    // the style applied when a validation error occures
+    error: {
+      color: '#000000',
+      fontSize: 17,
+      height: 36,
+      padding: 7,
+      borderRadius: 4,
+      borderColor: '#a94442', // <= relevant style here
+      borderWidth: 1,
+      marginBottom: 5,
+    },
+  },
   controlLabel: {
     normal: {
       color: 'black',
@@ -53,7 +79,7 @@ const options = {
     },
     phone: {
       label: 'Phone Number',
-      error: 'Enter your phone number.',
+      error: 'Enter your phone number (only numbers).',
     },
     order: {
       error: `What'll it be dawg?`,
@@ -63,9 +89,31 @@ const options = {
 };
 
 export default function HomeScreen() {
-  handleSubmit = () => {
-    const value = this._form.getValue(); // use that ref to get the form value
-    console.log('Value:', value);
+  // function constructor(props) {
+  //   this.state = {
+  //     value: null,
+  //   };
+  // }
+  getInitialState = () => {
+    return { value: null };
+  };
+  // onChange = value => {
+  //   this.setState({ value });
+  // };
+  clearForm = () => {
+    // clear content from all textbox
+    this.setState({ value: null });
+  };
+  onPress = () => {
+    // call getValue() to get the values of the form
+    const value = this.form.getValue();
+    // const value = this.refs.form.getValue();
+
+    if (value) {
+      // if validation fails, value will be null
+      console.log(value); // value here is an instance of Order
+      this.clearForm();
+    }
   };
   return (
     <View style={styles.container}>
@@ -78,7 +126,8 @@ export default function HomeScreen() {
             source={
               __DEV__
                 ? require('../assets/images/robot-dev.png')
-                : require('../assets/images/robot-prod.png')
+                : require('../assets/images/bdd.png')
+              // : require('../assets/images/robot-prod.png')
             }
             style={styles.welcomeImage}
           />
@@ -86,43 +135,25 @@ export default function HomeScreen() {
 
         <View style={styles.getStartedContainer}>
           <Text style={styles.getStartedText}>Bobcat Den Delivery</Text>
-
-          {/* <DevelopmentModeNotice /> */}
-
-          {/* <Text style={styles.getStartedText}>Get started by opening</Text> */}
         </View>
 
         <View style={styles.formContainer}>
           <Form
-            ref={c => (this._form = c)} // assign a ref
+            ref={c => (this.form = c)} // assign a ref
             type={Order}
+            // value={e => (this.state.value = e)} // avoid .bind(this) with arrow func
+            // onChange={e => (this.onChange = e)}
             options={options} // pass the options via props
           />
-          <Button title="Submit Order" onPress={this.handleSubmit} />
+          <TouchableHighlight
+            style={styles.button}
+            onPress={this.onPress}
+            underlayColor="#99d9f4"
+          >
+            <Text style={styles.buttonText}>Submit Order</Text>
+          </TouchableHighlight>
         </View>
-
-        {/* <View style={styles.helpContainer}>
-          <TouchableOpacity onPress={handleHelpPress} style={styles.helpLink}>
-            <Text style={styles.helpLinkText}>
-              Help, it didn’t automatically reload!
-            </Text>
-          </TouchableOpacity>
-        </View> */}
       </ScrollView>
-
-      {/* <View style={styles.tabBarInfoContainer}>
-        <Text style={styles.tabBarInfoText}>
-          This is a tab bar. You can edit it in:
-        </Text>
-
-        <View
-          style={[styles.codeHighlightContainer, styles.navigationFilename]}
-        >
-          <MonoText style={styles.codeHighlightText}>
-            navigation/MainTabNavigator.js
-          </MonoText>
-        </View>
-      </View> */}
     </View>
   );
 }
@@ -167,6 +198,21 @@ function handleHelpPress() {
 }
 
 const styles = StyleSheet.create({
+  button: {
+    height: 36,
+    backgroundColor: '#48BBEC',
+    borderColor: '#48BBEC',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 10,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontSize: 18,
+    color: 'white',
+    alignSelf: 'center',
+  },
   formContainer: {
     justifyContent: 'center',
     marginTop: 0,
