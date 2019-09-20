@@ -8,11 +8,65 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Button,
+  Alert,
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
 
+import t from 'tcomb-form-native';
+
+const Form = t.form.Form;
+
+const Order = t.struct({
+  name: t.String,
+  location: t.String,
+  phone: t.Number,
+  order: t.String,
+});
+
+const formStyles = {
+  ...Form.stylesheet,
+  controlLabel: {
+    normal: {
+      color: 'black',
+      fontSize: 18,
+      marginBottom: 7,
+      fontWeight: '600',
+    },
+    error: {
+      color: 'red',
+      fontSize: 18,
+      marginBottom: 7,
+      fontWeight: '600',
+    },
+  },
+};
+
+const options = {
+  fields: {
+    name: {
+      error: 'Enter your name.',
+    },
+    location: {
+      error: 'Enter your dorm or house.',
+    },
+    phone: {
+      label: 'Phone Number',
+      error: 'Enter your phone number.',
+    },
+    order: {
+      error: `What'll it be dawg?`,
+    },
+  },
+  stylesheet: formStyles,
+};
+
 export default function HomeScreen() {
+  handleSubmit = () => {
+    const value = this._form.getValue(); // use that ref to get the form value
+    console.log('Value:', value);
+  };
   return (
     <View style={styles.container}>
       <ScrollView
@@ -31,17 +85,20 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.getStartedContainer}>
-          <DevelopmentModeNotice />
+          <Text style={styles.getStartedText}>Bobcat Den Delivery</Text>
+
+          {/* <DevelopmentModeNotice /> */}
 
           {/* <Text style={styles.getStartedText}>Get started by opening</Text> */}
+        </View>
 
-          <View
-            style={[styles.codeHighlightContainer, styles.homeScreenFilename]}
-          >
-            {/* <MonoText>screens/HomeScreen.js</MonoText> */}
-          </View>
-
-          <Text style={styles.getStartedText}>Bobcat Den Delivery</Text>
+        <View style={styles.formContainer}>
+          <Form
+            ref={c => (this._form = c)} // assign a ref
+            type={Order}
+            options={options} // pass the options via props
+          />
+          <Button title="Submit Order" onPress={this.handleSubmit} />
         </View>
 
         {/* <View style={styles.helpContainer}>
@@ -53,7 +110,7 @@ export default function HomeScreen() {
         </View> */}
       </ScrollView>
 
-      <View style={styles.tabBarInfoContainer}>
+      {/* <View style={styles.tabBarInfoContainer}>
         <Text style={styles.tabBarInfoText}>
           This is a tab bar. You can edit it in:
         </Text>
@@ -65,7 +122,7 @@ export default function HomeScreen() {
             navigation/MainTabNavigator.js
           </MonoText>
         </View>
-      </View>
+      </View> */}
     </View>
   );
 }
@@ -84,14 +141,14 @@ function DevelopmentModeNotice() {
 
     return (
       <Text style={styles.developmentModeText}>
-        Development mode is enabled: your app will be slower but you can use
-        useful development tools. {learnMoreButton}
+        {/* Development mode is enabled: your app will be slower but you can use
+        useful development tools. {learnMoreButton} */}
       </Text>
     );
   } else {
     return (
       <Text style={styles.developmentModeText}>
-        You are not in development mode: your app will run at full speed.
+        {/* You are not in development mode: your app will run at full speed. */}
       </Text>
     );
   }
@@ -110,13 +167,20 @@ function handleHelpPress() {
 }
 
 const styles = StyleSheet.create({
+  formContainer: {
+    justifyContent: 'center',
+    marginTop: 0,
+    padding: 20,
+    backgroundColor: '#ebef5a',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ebef5a',
   },
   developmentModeText: {
     marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
+    color: '#000000',
+    // color: 'rgba(0,0,0,0.4)',
     fontSize: 14,
     lineHeight: 19,
     textAlign: 'center',
@@ -138,7 +202,7 @@ const styles = StyleSheet.create({
   },
   getStartedContainer: {
     alignItems: 'center',
-    marginHorizontal: 50,
+    marginHorizontal: 0,
   },
   homeScreenFilename: {
     marginVertical: 7,
@@ -152,9 +216,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
+    fontSize: 32,
+    color: '#000000',
+    // color: 'rgba(96,100,109, 1)',
+    lineHeight: 32,
     textAlign: 'center',
   },
   tabBarInfoContainer: {
