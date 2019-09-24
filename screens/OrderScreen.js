@@ -1,11 +1,12 @@
 import * as WebBrowser from 'expo-web-browser';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Image,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
   Button,
@@ -20,9 +21,9 @@ import { TouchableHighlight } from 'react-native-gesture-handler';
 const Form = t.form.Form;
 
 const Order = t.struct({
+  phone: t.Number,
   name: t.String,
   location: t.String,
-  phone: t.Number,
   order: t.String,
 });
 
@@ -36,7 +37,8 @@ const formStyles = {
       height: 36,
       padding: 7,
       borderRadius: 4,
-      borderColor: '#cccccc', // <= relevant style here
+      borderColor: '#696969', // <= relevant style here
+      backgroundColor: '#ffffff',
       borderWidth: 1,
       marginBottom: 5,
     },
@@ -71,38 +73,49 @@ const formStyles = {
 
 const options = {
   fields: {
-    name: {
-      error: 'Enter your name.',
-    },
-    location: {
-      error: 'Enter your dorm or house.',
-    },
     phone: {
       label: 'Phone Number',
       error: 'Enter your phone number (only numbers).',
+      keyboardAppearance: 'dark',
+      returnKeyType: 'next',
+      maxLength: 10,
+      // onEndEditing: () => this.form.getComponent('order').refs.input.focus(),
+      onSubmitEditing: () => this.form.getComponent('name').refs.input.focus(),
+    },
+    name: {
+      error: 'Enter your name.',
+      returnKeyType: 'next',
+      keyboardAppearance: 'dark',
+      onSubmitEditing: () =>
+        this.form.getComponent('location').refs.input.focus(),
+    },
+    location: {
+      error: 'Enter your dorm or house.',
+      returnKeyType: 'next',
+      keyboardAppearance: 'dark',
+      onSubmitEditing: () => this.form.getComponent('order').refs.input.focus(),
     },
     order: {
       error: `What'll it be dawg?`,
+      returnKeyType: 'done',
+      keyboardAppearance: 'dark',
+      // numberOfLines: 5,
+      // onSubmitEditing: () => this.onPress(),
     },
   },
   stylesheet: formStyles,
 };
 
 export default function HomeScreen() {
-  // function constructor(props) {
-  //   this.state = {
-  //     value: null,
-  //   };
-  // }
-  getInitialState = () => {
-    return { value: null };
-  };
-  // onChange = value => {
-  //   this.setState({ value });
-  // };
+  // declare a new state variable which we'll call 'value'
+  const [value, setValue] = useState();
+
+  useEffect(() => {
+    setValue(''); // Set field values to empty string
+  });
   clearForm = () => {
-    // clear content from all textbox
-    this.setState({ value: null });
+    // clear content from all fields
+    setValue();
   };
   onPress = () => {
     // call getValue() to get the values of the form
@@ -116,10 +129,11 @@ export default function HomeScreen() {
     }
   };
   return (
-    <View style={styles.container}>
+    <View style={styles.formContainer}>
       <ScrollView
-        style={styles.container}
+        style={styles.formContainer}
         contentContainerStyle={styles.contentContainer}
+        keyboardDismissMode={'on-drag'}
       >
         <View style={styles.welcomeContainer}>
           <Image
@@ -127,7 +141,6 @@ export default function HomeScreen() {
               __DEV__
                 ? require('../assets/images/robot-dev.png')
                 : require('../assets/images/bdd.png')
-              // : require('../assets/images/robot-prod.png')
             }
             style={styles.welcomeImage}
           />
@@ -214,14 +227,17 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   formContainer: {
+    flex: 1,
     justifyContent: 'center',
     marginTop: 0,
-    padding: 20,
-    backgroundColor: '#ebef5a',
+    padding: 10, // 20
+    backgroundColor: '#ffd15c',
+    textAlignVertical: 'top',
+    // backgroundColor: '#ebef5a',
   },
   container: {
     flex: 1,
-    backgroundColor: '#ebef5a',
+    backgroundColor: '#ffd15c',
   },
   developmentModeText: {
     marginBottom: 20,
