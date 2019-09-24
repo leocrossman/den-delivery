@@ -11,6 +11,7 @@ import {
   View,
   Button,
   Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
@@ -21,8 +22,8 @@ import { TouchableHighlight } from 'react-native-gesture-handler';
 const Form = t.form.Form;
 
 const Order = t.struct({
-  phone: t.Number,
   name: t.String,
+  phone: t.Number,
   location: t.String,
   order: t.String,
 });
@@ -37,7 +38,7 @@ const formStyles = {
       height: 36,
       padding: 7,
       borderRadius: 4,
-      borderColor: '#696969', // <= relevant style here
+      borderColor: '#696969', // relevant style here
       backgroundColor: '#ffffff',
       borderWidth: 1,
       marginBottom: 5,
@@ -73,6 +74,12 @@ const formStyles = {
 
 const options = {
   fields: {
+    name: {
+      error: 'Enter your name.',
+      returnKeyType: 'next',
+      keyboardAppearance: 'dark',
+      onSubmitEditing: () => this.form.getComponent('phone').refs.input.focus(),
+    },
     phone: {
       label: 'Phone Number',
       error: 'Enter your phone number (only numbers).',
@@ -80,12 +87,6 @@ const options = {
       returnKeyType: 'next',
       maxLength: 10,
       // onEndEditing: () => this.form.getComponent('order').refs.input.focus(),
-      onSubmitEditing: () => this.form.getComponent('name').refs.input.focus(),
-    },
-    name: {
-      error: 'Enter your name.',
-      returnKeyType: 'next',
-      keyboardAppearance: 'dark',
       onSubmitEditing: () =>
         this.form.getComponent('location').refs.input.focus(),
     },
@@ -97,9 +98,25 @@ const options = {
     },
     order: {
       error: `What'll it be dawg?`,
-      returnKeyType: 'done',
+      returnKeyType: 'return',
+      autoCorrect: true,
       keyboardAppearance: 'dark',
-      // numberOfLines: 5,
+      maxLength: 300, // no spam
+      multiline: true,
+      stylesheet: {
+        ...formStyles,
+        textbox: {
+          ...formStyles.textbox,
+          normal: {
+            ...formStyles.textbox.normal,
+            height: 108,
+          },
+          error: {
+            ...formStyles.textbox.error,
+            height: 108,
+          },
+        },
+      },
       // onSubmitEditing: () => this.onPress(),
     },
   },
@@ -129,7 +146,11 @@ export default function HomeScreen() {
     }
   };
   return (
-    <View style={styles.formContainer}>
+    <KeyboardAvoidingView
+      style={styles.formContainer}
+      behavior="padding"
+      // keyboardVerticalOffset={20}
+    >
       <ScrollView
         style={styles.formContainer}
         contentContainerStyle={styles.contentContainer}
@@ -167,48 +188,13 @@ export default function HomeScreen() {
           </TouchableHighlight>
         </View>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
 HomeScreen.navigationOptions = {
   header: null,
 };
-
-function DevelopmentModeNotice() {
-  if (__DEV__) {
-    const learnMoreButton = (
-      <Text onPress={handleLearnMorePress} style={styles.helpLinkText}>
-        Learn more
-      </Text>
-    );
-
-    return (
-      <Text style={styles.developmentModeText}>
-        {/* Development mode is enabled: your app will be slower but you can use
-        useful development tools. {learnMoreButton} */}
-      </Text>
-    );
-  } else {
-    return (
-      <Text style={styles.developmentModeText}>
-        {/* You are not in development mode: your app will run at full speed. */}
-      </Text>
-    );
-  }
-}
-
-function handleLearnMorePress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/development-mode/'
-  );
-}
-
-function handleHelpPress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
-  );
-}
 
 const styles = StyleSheet.create({
   button: {
