@@ -76,14 +76,15 @@ const formStyles = {
 const options = {
   fields: {
     name: {
-      error: 'Enter your name',
+      // removed error messages due to clutter and are unnecessary/redundant
+      // error: 'Enter your name',
       returnKeyType: 'next',
       keyboardAppearance: 'dark',
       onSubmitEditing: () => this.form.getComponent('phone').refs.input.focus(),
     },
     phone: {
       label: 'Phone Number',
-      error: 'Enter your phone number (only numbers).',
+      // error: 'Enter your phone number (only numbers)',
       keyboardAppearance: 'dark',
       returnKeyType: 'next',
       maxLength: 10,
@@ -92,13 +93,13 @@ const options = {
         this.form.getComponent('location').refs.input.focus(),
     },
     location: {
-      error: 'Enter your dorm or house',
+      // error: 'Enter your dorm or house',
       returnKeyType: 'next',
       keyboardAppearance: 'dark',
       onSubmitEditing: () => this.form.getComponent('order').refs.input.focus(),
     },
     order: {
-      error: `What'll it be dawg?`,
+      // error: `What'll it be dawg?`,
       returnKeyType: 'return',
       autoCorrect: true,
       keyboardAppearance: 'dark',
