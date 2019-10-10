@@ -19,7 +19,11 @@ export default function InfoScreen() {
    * we just wanted to give you a quick view of your config.
    */
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
+    >
       <Text style={styles.text}>
         {' '}
         BDD delivers deliciousness to your doorstep!{'\n'}
@@ -27,6 +31,11 @@ export default function InfoScreen() {
         {'\n'} Enter your information and order in the order form and we will
         bring your food to you. You will pay when we arrive via credit/debit
         card.
+        {'\n'}
+        {'\n'}Delivery Fees:{'\n'}Order under $8: +$3 markup{'\n'}Order over $8:
+        +$4 markup{'\n'}Order over $20: +$8 markup{'\n'}Mozz Sticks ONLY: $6.99
+        {'\n'}Fries ONLY: $4.99{'\n'}F’real: +$1, in addition to delivery fee
+        {'\n'}
         {'\n'}
         {'\n'} Let us know if you have any special requests.
         {'\n'}

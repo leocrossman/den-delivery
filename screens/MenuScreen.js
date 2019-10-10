@@ -15,7 +15,11 @@ import {
 
 export default function MenuScreen() {
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
+    >
       <Text style={styles.title}> Den Menu</Text>
       <Text style={styles.text}>
         Sandwiches: {'\n'}Turkey/Ham/Tuna{'\n'}Chunky Chicken Salad{'\n'}

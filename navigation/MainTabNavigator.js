@@ -27,7 +27,7 @@ OrderStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-rocket' : 'md-information-circle'}
+      name={Platform.OS === 'ios' ? 'ios-bicycle' : 'md-bicycle'}
     />
   ),
 };
@@ -46,7 +46,7 @@ MenuStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-book' : 'md-link'}
+      name={Platform.OS === 'ios' ? 'ios-book' : 'md-book'}
     />
   ),
 };
@@ -65,7 +65,11 @@ InfoStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
+      name={
+        Platform.OS === 'ios'
+          ? 'ios-information-circle-outline'
+          : 'md-information-circle-outline'
+      }
     />
   ),
 };

@@ -19,6 +19,8 @@ import { MonoText } from '../components/StyledText';
 import t from 'tcomb-form-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 
+const isClosed = true;
+
 const Form = t.form.Form;
 
 const Order = t.struct({
@@ -155,43 +157,53 @@ export default function HomeScreen() {
       behavior="padding"
       // keyboardVerticalOffset={20}
     >
-      <ScrollView
-        style={styles.formContainer}
-        contentContainerStyle={styles.contentContainer}
-        keyboardDismissMode={'on-drag'}
-      >
-        <View style={styles.welcomeContainer}>
-          <Image
-            source={
-              __DEV__
-                ? require('../assets/images/robot-dev.png')
-                : require('../assets/images/bdd.png')
-            }
-            style={styles.welcomeImage}
-          />
-        </View>
+      {isClosed ? (
+        <Text style={styles.closed}>
+          We're closed!{'\n'}
+          {'\n'}Our hours are Sunday - Thursday{'\n'}from 9 PM - Midnight.{'\n'}
+          {'\n'}See you then!
+        </Text>
+      ) : (
+        <ScrollView
+          style={styles.formContainer}
+          contentContainerStyle={styles.contentContainer}
+          keyboardDismissMode={'on-drag'}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.welcomeContainer}>
+            <Image
+              source={
+                __DEV__
+                  ? require('../assets/images/robot-dev.png')
+                  : require('../assets/images/bdd.png')
+              }
+              style={styles.welcomeImage}
+            />
+          </View>
 
-        <View style={styles.getStartedContainer}>
-          <Text style={styles.getStartedText}>Bobcat Den Delivery</Text>
-        </View>
+          <View style={styles.getStartedContainer}>
+            <Text style={styles.getStartedText}>Bobcat Den Delivery</Text>
+          </View>
 
-        <View style={styles.formContainer}>
-          <Form
-            ref={c => (this.form = c)} // assign a ref
-            type={Order}
-            // value={e => (this.state.value = e)} // avoid .bind(this) with arrow func
-            // onChange={e => (this.onChange = e)}
-            options={options} // pass the options via props
-          />
-          <TouchableHighlight
-            style={styles.button}
-            onPress={this.onPress}
-            underlayColor="#99d9f4"
-          >
-            <Text style={styles.buttonText}>Submit Order</Text>
-          </TouchableHighlight>
-        </View>
-      </ScrollView>
+          <View style={styles.formContainer}>
+            <Form
+              ref={c => (this.form = c)} // assign a ref
+              type={Order}
+              // value={e => (this.state.value = e)} // avoid .bind(this) with arrow func
+              // onChange={e => (this.onChange = e)}
+              options={options} // pass the options via props
+            />
+            <TouchableHighlight
+              style={styles.button}
+              onPress={this.onPress}
+              underlayColor="#99d9f4"
+            >
+              <Text style={styles.buttonText}>Submit Order</Text>
+            </TouchableHighlight>
+          </View>
+        </ScrollView>
+      )}
     </KeyboardAvoidingView>
   );
 }
@@ -201,6 +213,13 @@ HomeScreen.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
+  closed: {
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
+    paddingBottom: 40,
+    paddingHorizontal: 20,
+  },
   button: {
     height: 36,
     backgroundColor: '#48BBEC',
