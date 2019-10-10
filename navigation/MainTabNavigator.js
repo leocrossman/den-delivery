@@ -8,7 +8,7 @@ import {
 import TabBarIcon from '../components/TabBarIcon';
 import OrderScreen from '../screens/OrderScreen';
 import MenuScreen from '../screens/MenuScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import SettingsScreen from '../screens/InfoScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -53,15 +53,15 @@ MenuStack.navigationOptions = {
 
 MenuStack.path = '';
 
-const SettingsStack = createStackNavigator(
+const InfoStack = createStackNavigator(
   {
     Settings: SettingsScreen,
   },
   config
 );
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+InfoStack.navigationOptions = {
+  tabBarLabel: 'Info',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -70,12 +70,12 @@ SettingsStack.navigationOptions = {
   ),
 };
 
-SettingsStack.path = '';
+InfoStack.path = '';
 
 const tabNavigator = createBottomTabNavigator({
   OrderStack,
   MenuStack,
-  SettingsStack,
+  InfoStack,
 });
 
 tabNavigator.path = '';

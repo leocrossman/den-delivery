@@ -39,7 +39,7 @@ const formStyles = {
       padding: 7,
       borderRadius: 4,
       borderColor: '#696969', // relevant style here
-      backgroundColor: '#ffffff',
+      backgroundColor: '#fff',
       borderWidth: 1,
       marginBottom: 5,
     },
@@ -51,14 +51,15 @@ const formStyles = {
       height: 36,
       padding: 7,
       borderRadius: 4,
-      borderColor: '#a94442', // <= relevant style here
+      borderColor: '#696969', // <= relevant style here
+      backgroundColor: '#ffffff',
       borderWidth: 1,
       marginBottom: 5,
     },
   },
   controlLabel: {
     normal: {
-      color: 'black',
+      color: 'white',
       fontSize: 18,
       marginBottom: 7,
       fontWeight: '600',
@@ -75,7 +76,7 @@ const formStyles = {
 const options = {
   fields: {
     name: {
-      error: 'Enter your name.',
+      error: 'Enter your name',
       returnKeyType: 'next',
       keyboardAppearance: 'dark',
       onSubmitEditing: () => this.form.getComponent('phone').refs.input.focus(),
@@ -91,7 +92,7 @@ const options = {
         this.form.getComponent('location').refs.input.focus(),
     },
     location: {
-      error: 'Enter your dorm or house.',
+      error: 'Enter your dorm or house',
       returnKeyType: 'next',
       keyboardAppearance: 'dark',
       onSubmitEditing: () => this.form.getComponent('order').refs.input.focus(),
@@ -143,6 +144,8 @@ export default function HomeScreen() {
       // if validation fails, value will be null
       console.log(value); // value here is an instance of Order
       this.clearForm();
+      // order confirmation only if form is complete
+      Alert.alert('Order Received', 'See you soon!');
     }
   };
   return (
@@ -217,7 +220,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 0,
     padding: 10, // 20
-    backgroundColor: '#ffa01c',
+    // backgroundColor: '#d51a37',
+    // backgroundColor: '#ffa01c',
+    backgroundColor: '#881124',
     textAlignVertical: 'top',
     // backgroundColor: '#ebef5a',
   },
@@ -251,6 +256,7 @@ const styles = StyleSheet.create({
   getStartedContainer: {
     alignItems: 'center',
     marginHorizontal: 0,
+    color: '#ffffff',
   },
   homeScreenFilename: {
     marginVertical: 7,
@@ -265,7 +271,7 @@ const styles = StyleSheet.create({
   },
   getStartedText: {
     fontSize: 32,
-    color: '#000000',
+    color: '#ffffff',
     // color: 'rgba(96,100,109, 1)',
     lineHeight: 32,
     textAlign: 'center',
