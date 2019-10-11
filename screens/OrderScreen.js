@@ -14,12 +14,23 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
+// import GoogleSheet, { batchGet } from 'react-native-google-sheet';
+// const { google } = require('googleapis');
+// const { GoogleAuth } = require('google-auth-library');
+
+// const authClient = new googleAuth();
+// const auth = new authClient.OAuth2();
+// auth.credentials = {
+//   access_token: accessToken,
+// };
+// this.service = google.sheets({ version: 'v4', auth: auth });
+
 import { MonoText } from '../components/StyledText';
 
 import t from 'tcomb-form-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 
-const isClosed = true;
+const isClosed = false;
 
 const Form = t.form.Form;
 
