@@ -30,7 +30,24 @@ import { MonoText } from '../components/StyledText';
 import t from 'tcomb-form-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 
+// const { GoogleSpreadsheet } = require('google-spreadsheet');
+// const { promisify } = require('util');
+
+// const creds = require('../client_secret.json');
+
+// async function accessSpreadsheet() {
+//   const doc = new GoogleSpreadsheet(
+//     '16nZNII6GWThuF1BqV6-3_6GbY3CLa6BNky3KsmIzLxg'
+//   );
+// }
+
+// accessSpreadsheet();
+
 const isClosed = false;
+
+// export let value;
+// let value;
+// exports.value = value;
 
 const Form = t.form.Form;
 
@@ -157,6 +174,16 @@ export default function HomeScreen() {
     if (value) {
       // if validation fails, value will be null
       console.log(value); // value here is an instance of Order
+      // export value
+      // exports.value = value;
+      fetch('https://us-central1-bobcat-den-delivery.cloudfunctions.net/main', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(value),
+      });
       this.clearForm();
       // order confirmation only if form is complete
       Alert.alert('Order Received', 'See you soon!');

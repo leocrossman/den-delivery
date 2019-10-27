@@ -20,7 +20,9 @@
     "expo-constants": "6.0.0",
     "expo-font": "~6.0.0",
     "expo-web-browser": "6.0.0",
+    "firebase": "^7.2.1",
     "google-auth-library": "^5.4.1",
+    "google-spreadsheet": "^2.0.8",
     "googleapis": "^43.0.0",
     "react": "16.8.3",
     "react-dom": "^16.8.6",
@@ -33,7 +35,8 @@
   },
   "devDependencies": {
     "babel-preset-expo": "^6.0.0",
-    "jest-expo": "^34.0.0"
+    "jest-expo": "^34.0.0",
+    "util": "^0.12.1"
   },
   "private": true
 }

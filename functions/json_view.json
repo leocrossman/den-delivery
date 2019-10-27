@@ -1,0 +1,85 @@
+{
+  "err": {
+    "response": {
+      "config": {
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI?range=Sheet1&valueInputOption=USER_ENTERED",
+        "method": "GET",
+        "headers": {
+          "x-goog-api-client": "gdcl/3.1.1 gl-node/8.16.0 auth/5.5.1",
+          "Accept-Encoding": "gzip",
+          "User-Agent": "google-api-nodejs-client/3.1.1 (gzip)",
+          "Authorization": "Bearer ya29.c.KpUBqQf7Q5P2_7ZI2Mq0dg5YmIRzouI7FBVjY7NYM9twNnzWtpt4ToYcsE4T5q8hAq0z3UYaEJSa3cZgJ1cDmBBbC5ak23_thjW0l8ZiaEUqQDAXogRziRez7wOUB5fzeRFp5cFX6-mltW1PiuXUt4k4Jv9pg8a6FCGYGcVB8VCV2awcR2w2AouACIWgyUJV0AjOj7BJvYA",
+          "Accept": "application/json"
+        },
+        "params": { "range": "Sheet1", "valueInputOption": "USER_ENTERED" },
+        "retry": true,
+        "responseType": "json",
+        "retryConfig": {
+          "currentRetryAttempt": 0,
+          "retry": 3,
+          "retryDelay": 100,
+          "httpMethodsToRetry": ["GET", "HEAD", "PUT", "OPTIONS", "DELETE"],
+          "noResponseRetries": 2,
+          "statusCodesToRetry": [[100, 199], [429, 429], [500, 599]]
+        }
+      },
+      "data": {
+        "error": {
+          "code": 400,
+          "message": "Invalid JSON payload received. Unknown name \"range\": Cannot bind query parameter. Field 'range' could not be found in request message.\nInvalid JSON payload received. Unknown name \"valueInputOption\": Cannot bind query parameter. Field 'valueInputOption' could not be found in request message.",
+          "errors": [
+            {
+              "message": "Invalid JSON payload received. Unknown name \"range\": Cannot bind query parameter. Field 'range' could not be found in request message.\nInvalid JSON payload received. Unknown name \"valueInputOption\": Cannot bind query parameter. Field 'valueInputOption' could not be found in request message.",
+              "reason": "invalid"
+            }
+          ],
+          "status": "INVALID_ARGUMENT"
+        }
+      },
+      "headers": {
+        "alt-svc": "quic=\":443\"; ma=2592000; v=\"46,43\",h3-Q048=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000",
+        "cache-control": "private",
+        "connection": "close",
+        "content-encoding": "gzip",
+        "content-type": "application/json; charset=UTF-8",
+        "date": "Fri, 25 Oct 2019 19:19:51 GMT",
+        "server": "ESF",
+        "transfer-encoding": "chunked",
+        "vary": "Origin, X-Origin, Referer",
+        "x-frame-options": "SAMEORIGIN",
+        "x-xss-protection": "0"
+      },
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    "config": {
+      "url": "https://sheets.googleapis.com/v4/spreadsheets/1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI?range=Sheet1&valueInputOption=USER_ENTERED",
+      "method": "GET",
+      "headers": {
+        "x-goog-api-client": "gdcl/3.1.1 gl-node/8.16.0 auth/5.5.1",
+        "Accept-Encoding": "gzip",
+        "User-Agent": "google-api-nodejs-client/3.1.1 (gzip)",
+        "Authorization": "Bearer ya29.c.KpUBqQf7Q5P2_7ZI2Mq0dg5YmIRzouI7FBVjY7NYM9twNnzWtpt4ToYcsE4T5q8hAq0z3UYaEJSa3cZgJ1cDmBBbC5ak23_thjW0l8ZiaEUqQDAXogRziRez7wOUB5fzeRFp5cFX6-mltW1PiuXUt4k4Jv9pg8a6FCGYGcVB8VCV2awcR2w2AouACIWgyUJV0AjOj7BJvYA",
+        "Accept": "application/json"
+      },
+      "params": { "range": "Sheet1", "valueInputOption": "USER_ENTERED" },
+      "retry": true,
+      "responseType": "json",
+      "retryConfig": {
+        "currentRetryAttempt": 0,
+        "retry": 3,
+        "retryDelay": 100,
+        "httpMethodsToRetry": ["GET", "HEAD", "PUT", "OPTIONS", "DELETE"],
+        "noResponseRetries": 2,
+        "statusCodesToRetry": [[100, 199], [429, 429], [500, 599]]
+      }
+    },
+    "code": 400,
+    "errors": [
+      {
+        "message": "Invalid JSON payload received. Unknown name \"range\": Cannot bind query parameter. Field 'range' could not be found in request message.\nInvalid JSON payload received. Unknown name \"valueInputOption\": Cannot bind query parameter. Field 'valueInputOption' could not be found in request message.",
+        "reason": "invalid"
+      }
+    ]
+  }
+}
