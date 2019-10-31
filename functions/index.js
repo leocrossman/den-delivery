@@ -14,7 +14,26 @@ function sameDay(d1, d2) {
   );
 }
 
-exports.main = functions.https.onRequest(async (req, res) => {
+const dateColonToDash = date => {
+  const dateString = date.toISOString();
+  return dateString.replace(/:/gi, '_');
+};
+
+const dateDashToColon = dateString => {
+  const dateColonString = dateString.replace(/_/gi, ':');
+  const dateAsUTCCount = Date.parse(dateColonString);
+  return new Date(dateAsUTCCount);
+};
+
+const correctDay = date => {
+  let day = date.setDate(date.getDate() - 1);
+  day = new Date(day);
+  day = day.setHours(day.getHours() - 4);
+  day = new Date(day);
+  return day;
+};
+
+exports.order = functions.https.onRequest(async (req, res) => {
   try {
     const value = await req.body;
     const NAME = value.name;
@@ -35,16 +54,22 @@ exports.main = functions.https.onRequest(async (req, res) => {
     });
     const allSheets = sheetData.data.sheets;
     // res.send(sheetData);
-    const lastSheetTitle = allSheets[allSheets.length - 1].properties.title;
+    let lastSheetTitle = allSheets[allSheets.length - 1].properties.title;
+    if (!(lastSheetTitle instanceof Date)) {
+      // if the last sheet is not in colon format, update for comparing dates below
+      lastSheetTitle = dateDashToColon(lastSheetTitle);
+    }
+    let newSheetTitle; // initialize for scoping later
     const currentTime = new Date();
     const keepSheet = sameDay(lastSheetTitle, currentTime); // if false, make new sheet for orders...
     // first order will make a new order sheet for the new day
     if (!keepSheet) {
+      currentTimeDashed = dateColonToDash(currentTime); // current time with underscores instead of colons bc of sheets api
       const addSheet = promisify(
         api.spreadsheets.batchUpdate.bind(api.spreadsheets)
       );
       // just make a new sheet so that we can get its sheetId
-      const add_tab_request = {
+      const addTabRequest = {
         auth: auth,
         spreadsheetId: '1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI',
         resource: {
@@ -52,34 +77,17 @@ exports.main = functions.https.onRequest(async (req, res) => {
             {
               addSheet: {
                 properties: {
-                  title: currentTime,
+                  // title: currentTime,
+                  title: currentTimeDashed,
                 },
               },
             },
-
-            // {
-            //   valueInputOption: 'USER_ENTERED',
-            //   data: {
-            //     values: [
-            //       [
-            //         'Timestamp',
-            //         'Name',
-            //         'Delivery Location',
-            //         'Phone Number',
-            //         'What can we get for ya?',
-            //         'Den Cost',
-            //         'Total',
-            //         'red=ordered\nyellow=bagged\ngreen=delivered',
-            //       ],
-            //     ],
-            //   },
-            // },
           ],
         },
       };
 
-      await addSheet(add_tab_request);
-      // res.status(200).send('newSheetData3'); // this send works!
+      await addSheet(addTabRequest);
+      console.log('Sheet added.');
       const getNewSheets = promisify(
         api.spreadsheets.get.bind(api.spreadsheets)
       );
@@ -89,6 +97,7 @@ exports.main = functions.https.onRequest(async (req, res) => {
       const newSheetList = newSheetData.data.sheets;
       const newSheetId =
         newSheetList[newSheetList.length - 1].properties.sheetId;
+      newSheetTitle = newSheetList[newSheetList.length - 1].properties.title;
 
       const formatNewSheet = {
         auth: auth,
@@ -117,16 +126,6 @@ exports.main = functions.https.onRequest(async (req, res) => {
                 },
               },
             },
-            // {
-            //   range: {
-            //     sheetId: newSheetId,
-            //     startRowIndex: 0,
-            //     endRowIndex: 1,
-            //     startColumnIndex: 0,
-            //     endColumnIndex: 8,
-            //   },
-            // updateWrapStrategy: 'WRAP',
-            // },
             {
               repeatCell: {
                 range: {
@@ -177,69 +176,53 @@ exports.main = functions.https.onRequest(async (req, res) => {
         api.spreadsheets.batchUpdate.bind(api.spreadsheets)
       );
       // add formatting to new sheet now that we have sheetId ref
-      await addFormat(formatNewSheet, err => {
-        if (err) {
-          // Handle error.
-          console.log(err);
-        } else {
-          // console.log(`Spreadsheet ID: ${spreadsheet.spreadsheetId}`);
-          console.log('Sheet updated.');
-        }
-      });
-
-      // const newSheet = await addSheet(
-      //   {
-      // auth: auth,
-      // 'Spreadsheet ID': '1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI',
-      // range: currentTime,
-      // resource: {
-      //   spreadsheetId: '1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI',
-      //   addSheet: {
-      //     properties: {
-      //       title: 'currentTime',
-      //     },
-      //   },
-      // },
-      //     },
-      //     (err, spreadsheet) => {
-      //       if (err) {
-      //         // Handle error.
-      //         console.log(err);
-      //       } else {
-      //         console.log(`Spreadsheet ID: ${spreadsheet.spreadsheetId}`);
-      //       }
-      //     }
-      //   );
+      await addFormat(formatNewSheet);
+      // await addFormat(formatNewSheet, err => {
+      //   if (err) {
+      //     // Handle error.
+      //     console.log(err);
+      //   } else {
+      //     console.log('Sheet updated.');
+      //   }
+      //   console.log('here1');
+      // });
+      console.log('here2');
     }
-    res.status(200).send(keepSheet);
 
-    // const appendRows = promisify(
-    //   api.spreadsheets.values.append.bind(api.spreadsheets)
-    // );
-    // await appendRows({
-    //   auth: auth,
-    //   spreadsheetId: '1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI',
-    //   range: '1',
-    //   valueInputOption: 'USER_ENTERED',
-    //   resource: {
-    //     values: [[new Date(), NAME, PHONE, LOCATION, ORDER]],
-    //   },
-    // });
-    // res.status(200).send('OK');
+    // ATTENTION LEO! THE PROBLEM FOR WHEN YOU COME BACK IS THAT YOU NEED TO
+    // MAKE ANOTHER GET REQUEST SINCE THE LAST ONE HAPPENS INSIDE OF THE CONDITIONAL
+    // AT LEAST I THINK...
+    console.log('here3');
+    const appendRows = promisify(
+      api.spreadsheets.values.append.bind(api.spreadsheets)
+    );
+    console.log('here4');
+
+    if (newSheetTitle) console.log('newSheetTitle:', newSheetTitle);
+    if (lastSheetTitle instanceof Date) {
+      // if the last sheet is not in colon format, update for comparing dates below
+      lastSheetTitle = dateColonToDash(lastSheetTitle);
+    }
+    console.log('lastSheetTitle:', lastSheetTitle);
+
+    await appendRows(
+      {
+        auth: auth,
+        spreadsheetId: '1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI',
+        range: newSheetTitle || lastSheetTitle,
+        valueInputOption: 'USER_ENTERED',
+        resource: {
+          values: [[correctDay(new Date()), NAME, LOCATION, PHONE, ORDER]],
+        },
+      },
+      err => {
+        if (err) console.log(err);
+        else console.log('No errors.');
+      }
+    );
+    console.log('Order added.');
+    res.status(200).send('OK');
   } catch (err) {
     res.status(500).send({ err });
   }
 });
-
-// function newSheet() {
-// [
-// 'Timestamp',
-// 'Name',
-// 'Delivery Location',
-// 'Phone Number',
-// 'What can we get for ya?',
-// 'Den Cost',
-// 'Total',
-// 'red=ordered\nyellow=bagged\ngreen=delivered',
-// ],
-// }
