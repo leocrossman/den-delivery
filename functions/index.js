@@ -34,6 +34,7 @@ exports.main = functions.https.onRequest(async (req, res) => {
       spreadsheetId: '1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI',
     });
     const allSheets = sheetData.data.sheets;
+    // res.send(sheetData);
     const lastSheetTitle = allSheets[allSheets.length - 1].properties.title;
     const currentTime = new Date();
     const keepSheet = sameDay(lastSheetTitle, currentTime); // if false, make new sheet for orders...
@@ -42,6 +43,7 @@ exports.main = functions.https.onRequest(async (req, res) => {
       const addSheet = promisify(
         api.spreadsheets.batchUpdate.bind(api.spreadsheets)
       );
+      // just make a new sheet so that we can get its sheetId
       const add_tab_request = {
         auth: auth,
         spreadsheetId: '1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI',
@@ -49,18 +51,139 @@ exports.main = functions.https.onRequest(async (req, res) => {
           requests: [
             {
               addSheet: {
-                properties: { title: currentTime },
+                properties: {
+                  title: currentTime,
+                },
+              },
+            },
+
+            // {
+            //   valueInputOption: 'USER_ENTERED',
+            //   data: {
+            //     values: [
+            //       [
+            //         'Timestamp',
+            //         'Name',
+            //         'Delivery Location',
+            //         'Phone Number',
+            //         'What can we get for ya?',
+            //         'Den Cost',
+            //         'Total',
+            //         'red=ordered\nyellow=bagged\ngreen=delivered',
+            //       ],
+            //     ],
+            //   },
+            // },
+          ],
+        },
+      };
+
+      await addSheet(add_tab_request);
+      // res.status(200).send('newSheetData3'); // this send works!
+      const getNewSheets = promisify(
+        api.spreadsheets.get.bind(api.spreadsheets)
+      );
+      const newSheetData = await getNewSheets({
+        spreadsheetId: '1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI',
+      });
+      const newSheetList = newSheetData.data.sheets;
+      const newSheetId =
+        newSheetList[newSheetList.length - 1].properties.sheetId;
+
+      const formatNewSheet = {
+        auth: auth,
+        spreadsheetId: '1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI',
+        resource: {
+          requests: [
+            {
+              insertRange: {
+                range: {
+                  sheetId: newSheetId,
+                  startRowIndex: 0,
+                  endRowIndex: 1,
+                },
+                shiftDimension: 'ROWS',
+              },
+            },
+            {
+              pasteData: {
+                data:
+                  'Timestamp, Name, Delivery Location, Phone Number, Order, Den Cost, Total, red=ordered yellow=bagged green=delivered',
+                type: 'PASTE_NORMAL',
+                delimiter: ',',
+                coordinate: {
+                  sheetId: newSheetId,
+                  rowIndex: 0,
+                },
+              },
+            },
+            // {
+            //   range: {
+            //     sheetId: newSheetId,
+            //     startRowIndex: 0,
+            //     endRowIndex: 1,
+            //     startColumnIndex: 0,
+            //     endColumnIndex: 8,
+            //   },
+            // updateWrapStrategy: 'WRAP',
+            // },
+            {
+              repeatCell: {
+                range: {
+                  sheetId: newSheetId,
+                  startRowIndex: 0,
+                  endRowIndex: 1,
+                  startColumnIndex: 0,
+                  endColumnIndex: 8,
+                },
+                cell: {
+                  userEnteredFormat: {
+                    backgroundColor: {
+                      red: 0.0,
+                      green: 1.0,
+                      blue: 0.0,
+                    },
+                    wrapStrategy: 'WRAP',
+                    textFormat: {
+                      foregroundColor: {
+                        red: 0.0,
+                        green: 0.0,
+                        blue: 0.0,
+                      },
+                      fontSize: 12,
+                      bold: true,
+                    },
+                  },
+                },
+                fields:
+                  'userEnteredFormat(backgroundColor,textFormat,wrapStrategy)',
+              },
+            },
+            {
+              updateSheetProperties: {
+                properties: {
+                  sheetId: newSheetId,
+                  gridProperties: {
+                    frozenRowCount: 1,
+                  },
+                },
+                fields: 'gridProperties.frozenRowCount',
               },
             },
           ],
         },
       };
-      await addSheet(add_tab_request, (err, spreadsheet) => {
+      const addFormat = promisify(
+        api.spreadsheets.batchUpdate.bind(api.spreadsheets)
+      );
+      // add formatting to new sheet now that we have sheetId ref
+      await addFormat(formatNewSheet, err => {
         if (err) {
           // Handle error.
           console.log(err);
         } else {
-          console.log(`Spreadsheet ID: ${spreadsheet.spreadsheetId}`);
+          // console.log(`Spreadsheet ID: ${spreadsheet.spreadsheetId}`);
+          console.log('Sheet updated.');
         }
       });
 
@@ -110,13 +233,13 @@ exports.main = functions.https.onRequest(async (req, res) => {
 
 // function newSheet() {
 // [
-//   'Timestamp',
-//   'Name',
-//   'Delivery Location',
-//   'Phone Number',
-//   'What can we get for ya?',
-//   'Den Cost',
-//   'Total',
-//   'red=ordered\nyellow=bagged\ngreen=delivered',
+// 'Timestamp',
+// 'Name',
+// 'Delivery Location',
+// 'Phone Number',
+// 'What can we get for ya?',
+// 'Den Cost',
+// 'Total',
+// 'red=ordered\nyellow=bagged\ngreen=delivered',
 // ],
 // }
