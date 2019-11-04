@@ -1,17 +1,5 @@
 import React from 'react';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Button,
-  Alert,
-  KeyboardAvoidingView,
-} from 'react-native';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 
 export default function MenuScreen() {
   return (
@@ -53,7 +41,6 @@ export default function MenuScreen() {
 }
 
 MenuScreen.navigationOptions = {
-  // title: 'Menu',
   header: null,
 };
 

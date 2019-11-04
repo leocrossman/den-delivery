@@ -2,3 +2,4 @@ node_modules/
 client_secret.json
 api_key.json
 credentials.json
+spreadsheetId_secret.json

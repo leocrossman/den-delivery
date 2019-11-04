@@ -1,23 +1,7 @@
 import React from 'react';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Button,
-  Alert,
-  KeyboardAvoidingView,
-} from 'react-native';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 
 export default function InfoScreen() {
-  /**
-   * Go ahead and delete ExpoConfigView and replace it with your content;
-   * we just wanted to give you a quick view of your config.
-   */
   return (
     <ScrollView
       style={styles.container}
@@ -53,7 +37,6 @@ export default function InfoScreen() {
 }
 
 InfoScreen.navigationOptions = {
-  // title: 'Info',
   header: null,
 };
 

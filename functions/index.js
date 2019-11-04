@@ -25,16 +25,21 @@ const dateDashToColon = dateString => {
   return new Date(dateAsUTCCount);
 };
 
+const dashChecker = dashedDate => {
+  // Check if we are getting the string of dashed date
+  return dashedDate.match(/_/gi);
+};
+
 const correctDay = date => {
-  let day = date.setDate(date.getDate() - 1);
-  day = new Date(day);
-  day = day.setHours(day.getHours() - 4);
+  day = date.setHours(date.getHours() - 4); // Convert UTC -> EST
   day = new Date(day);
   return day;
 };
 
 exports.order = functions.https.onRequest(async (req, res) => {
   try {
+    const { spreadsheetId } = require('./spreadsheetId_secret.json');
+
     const value = await req.body;
     const NAME = value.name;
     const PHONE = value.phone;
@@ -50,12 +55,12 @@ exports.order = functions.https.onRequest(async (req, res) => {
     const api = google.sheets({ version: 'v4', auth });
     const getSheets = promisify(api.spreadsheets.get.bind(api.spreadsheets));
     const sheetData = await getSheets({
-      spreadsheetId: '1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI',
+      spreadsheetId: spreadsheetId,
     });
     const allSheets = sheetData.data.sheets;
     // res.send(sheetData);
     let lastSheetTitle = allSheets[allSheets.length - 1].properties.title;
-    if (!(lastSheetTitle instanceof Date)) {
+    if (!(lastSheetTitle instanceof Date) && dashChecker(lastSheetTitle)) {
       // if the last sheet is not in colon format, update for comparing dates below
       lastSheetTitle = dateDashToColon(lastSheetTitle);
     }
@@ -71,7 +76,7 @@ exports.order = functions.https.onRequest(async (req, res) => {
       // just make a new sheet so that we can get its sheetId
       const addTabRequest = {
         auth: auth,
-        spreadsheetId: '1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI',
+        spreadsheetId: spreadsheetId,
         resource: {
           requests: [
             {
@@ -92,7 +97,7 @@ exports.order = functions.https.onRequest(async (req, res) => {
         api.spreadsheets.get.bind(api.spreadsheets)
       );
       const newSheetData = await getNewSheets({
-        spreadsheetId: '1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI',
+        spreadsheetId: spreadsheetId,
       });
       const newSheetList = newSheetData.data.sheets;
       const newSheetId =
@@ -101,7 +106,7 @@ exports.order = functions.https.onRequest(async (req, res) => {
 
       const formatNewSheet = {
         auth: auth,
-        spreadsheetId: '1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI',
+        spreadsheetId: spreadsheetId,
         resource: {
           requests: [
             {
@@ -184,41 +189,42 @@ exports.order = functions.https.onRequest(async (req, res) => {
       //   } else {
       //     console.log('Sheet updated.');
       //   }
-      //   console.log('here1');
       // });
-      console.log('here2');
     }
 
-    // ATTENTION LEO! THE PROBLEM FOR WHEN YOU COME BACK IS THAT YOU NEED TO
-    // MAKE ANOTHER GET REQUEST SINCE THE LAST ONE HAPPENS INSIDE OF THE CONDITIONAL
-    // AT LEAST I THINK...
-    console.log('here3');
     const appendRows = promisify(
       api.spreadsheets.values.append.bind(api.spreadsheets)
     );
-    console.log('here4');
 
-    if (newSheetTitle) console.log('newSheetTitle:', newSheetTitle);
-    if (lastSheetTitle instanceof Date) {
+    if (newSheetTitle) {
+      console.log('newSheetTitle:', newSheetTitle);
+    }
+    if (lastSheetTitle instanceof Date && typeof lastSheetTitle !== 'string') {
       // if the last sheet is not in colon format, update for comparing dates below
       lastSheetTitle = dateColonToDash(lastSheetTitle);
+    } else if (lastSheetTitle === 'string') {
+      console.log('lastSheetTitle:', lastSheetTitle);
+      lastSheetTitle = null;
+      console.log('lastSheetTitle:', lastSheetTitle);
     }
-    console.log('lastSheetTitle:', lastSheetTitle);
 
     await appendRows(
       {
         auth: auth,
-        spreadsheetId: '1rehng5R3a5ShueeUWMUDde_wpXQKfGfQ57xugkBIFzI',
+        spreadsheetId: spreadsheetId,
         range: newSheetTitle || lastSheetTitle,
         valueInputOption: 'USER_ENTERED',
         resource: {
           values: [[correctDay(new Date()), NAME, LOCATION, PHONE, ORDER]],
         },
-      },
-      err => {
-        if (err) console.log(err);
-        else console.log('No errors.');
       }
+      // Add below for error checking, but we want the send to happen
+      // before 60 seconds and the function times out.
+      // for some reason, adding the error callback causes the function to timeout.
+      // err => {
+      //   if (err) console.log(err);
+      //   else console.log('No errors.');
+      // }
     );
     console.log('Order added.');
     res.status(200).send('OK');

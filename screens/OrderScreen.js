@@ -1,4 +1,3 @@
-import * as WebBrowser from 'expo-web-browser';
 import React, { useState, useEffect } from 'react';
 import {
   Image,
@@ -6,48 +5,15 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
-  Button,
   Alert,
   KeyboardAvoidingView,
 } from 'react-native';
 
-// import GoogleSheet, { batchGet } from 'react-native-google-sheet';
-// const { google } = require('googleapis');
-// const { GoogleAuth } = require('google-auth-library');
-
-// const authClient = new googleAuth();
-// const auth = new authClient.OAuth2();
-// auth.credentials = {
-//   access_token: accessToken,
-// };
-// this.service = google.sheets({ version: 'v4', auth: auth });
-
-import { MonoText } from '../components/StyledText';
-
 import t from 'tcomb-form-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 
-// const { GoogleSpreadsheet } = require('google-spreadsheet');
-// const { promisify } = require('util');
-
-// const creds = require('../client_secret.json');
-
-// async function accessSpreadsheet() {
-//   const doc = new GoogleSpreadsheet(
-//     '16nZNII6GWThuF1BqV6-3_6GbY3CLa6BNky3KsmIzLxg'
-//   );
-// }
-
-// accessSpreadsheet();
-
-const isClosed = false;
-
-// export let value;
-// let value;
-// exports.value = value;
+import firebase from 'firebase';
 
 const Form = t.form.Form;
 
@@ -129,7 +95,7 @@ const options = {
       onSubmitEditing: () => this.form.getComponent('order').refs.input.focus(),
     },
     order: {
-      // error: `What'll it be dawg?`,
+      // error: `What'll it be?`,
       returnKeyType: 'return',
       autoCorrect: true,
       keyboardAppearance: 'dark',
@@ -157,11 +123,39 @@ const options = {
 
 export default function HomeScreen() {
   // declare a new state variable which we'll call 'value'
-  const [value, setValue] = useState();
+  const [value, setValue] = useState('');
+  // we need to use setIsClosed so that we can check isClosed outside of useEffect
+  const [isClosed, setIsClosed] = useState(false);
+  // let isClosed = false;
 
   useEffect(() => {
     setValue(''); // Set field values to empty string
-  });
+    const firebaseConfig = require('../client_secret.json');
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    // use below to create skeleton of isClosed...
+    // firebase
+    //   .database()
+    //   .ref('bdd/status')
+    //   .set({
+    //     isClosed: true,
+    //   });
+
+    firebase
+      .database()
+      .ref('bdd/status')
+      .once('value')
+      .then(function(snapshot) {
+        setIsClosed(snapshot.val().isClosed); // turn the app on/off based on firebase database value of isClosed
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    // passing an empty array as second argument triggers the callback in useEffect only after the initial render thus replicating `componentDidMount` lifecycle behaviour
+  }, []); // this empty array is crucial.
+
   clearForm = () => {
     // clear content from all fields
     setValue();
@@ -169,32 +163,28 @@ export default function HomeScreen() {
   onPress = () => {
     // call getValue() to get the values of the form
     const value = this.form.getValue();
-    // const value = this.refs.form.getValue();
 
     if (value) {
       // if validation fails, value will be null
       console.log(value); // value here is an instance of Order
-      // export value
-      // exports.value = value;
-      fetch('https://us-central1-bobcat-den-delivery.cloudfunctions.net/main', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(value),
-      });
+      fetch(
+        'https://us-central1-bobcat-den-delivery.cloudfunctions.net/order',
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(value),
+        }
+      );
       this.clearForm();
       // order confirmation only if form is complete
       Alert.alert('Order Received', 'See you soon!');
     }
   };
   return (
-    <KeyboardAvoidingView
-      style={styles.formContainer}
-      behavior="padding"
-      // keyboardVerticalOffset={20}
-    >
+    <KeyboardAvoidingView style={styles.formContainer} behavior="padding">
       {isClosed ? (
         <Text style={styles.closed}>
           We're closed!{'\n'}
@@ -228,8 +218,6 @@ export default function HomeScreen() {
             <Form
               ref={c => (this.form = c)} // assign a ref
               type={Order}
-              // value={e => (this.state.value = e)} // avoid .bind(this) with arrow func
-              // onChange={e => (this.onChange = e)}
               options={options} // pass the options via props
             />
             <TouchableHighlight
