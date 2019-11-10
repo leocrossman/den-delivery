@@ -16,10 +16,10 @@ export default function InfoScreen() {
         bring your food to you. You will pay when we arrive via credit/debit
         card.
         {'\n'}
-        {'\n'}Delivery Fees:{'\n'}Order under $8: +$3 markup{'\n'}Order over $8:
+        {/* {'\n'}Delivery Fees:{'\n'}Order under $8: +$3 markup{'\n'}Order over $8:
         +$4 markup{'\n'}Order over $20: +$8 markup{'\n'}Mozz Sticks ONLY: $6.99
         {'\n'}Fries ONLY: $4.99{'\n'}F’real: +$1, in addition to delivery fee
-        {'\n'}
+        {'\n'} */}
         {'\n'}
         {'\n'} Let us know if you have any special requests.
         {'\n'}
@@ -29,7 +29,7 @@ export default function InfoScreen() {
         @den-delivery{'\n'}
         instagram @bobcatdendelivery{'\n'}
         {'\n'}
-        {'\n'} - BDD team {'<'}3{'\n'}
+        {'\n'} - BDD team {'<'}3
       </Text>
       <Text style={styles.smallText}>App made by Leo Crossman</Text>
     </ScrollView>
