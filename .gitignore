@@ -10,4 +10,4 @@ npm-debug.*
 web-build/
 web-report/
 client_secret.json
-builds/
+*.ipa
