@@ -30,10 +30,26 @@ const dashChecker = dashedDate => {
   return dashedDate.match(/_/gi);
 };
 
-const correctDay = date => {
-  day = date.setHours(date.getHours() - 4); // Convert UTC -> EST
-  day = new Date(day);
-  return day;
+Date.prototype.stdTimezoneOffset = function() {
+  const jan = new Date(this.getFullYear(), 0, 1);
+  const jul = new Date(this.getFullYear(), 6, 1);
+  return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+};
+
+Date.prototype.dst = function() {
+  return this.getTimezoneOffset() < this.stdTimezoneOffset();
+};
+
+const correctTime = date => {
+  const isDST = date.dst() ? true : false;
+  let estOffset = isDST ? 4 : 5;
+  estOffset = estOffset * 60 * 60 * 1000;
+
+  const dateMillis = date.getTime();
+
+  const curretEST = dateMillis - estOffset;
+  const estString = new Date(curretEST).toUTCString();
+  return estString;
 };
 
 exports.order = functions.https.onRequest(async (req, res) => {
@@ -215,7 +231,7 @@ exports.order = functions.https.onRequest(async (req, res) => {
         range: newSheetTitle || lastSheetTitle,
         valueInputOption: 'USER_ENTERED',
         resource: {
-          values: [[correctDay(new Date()), NAME, LOCATION, PHONE, ORDER]],
+          values: [[correctTime(new Date()), NAME, LOCATION, PHONE, ORDER]],
         },
       }
       // Add below for error checking, but we want the send to happen

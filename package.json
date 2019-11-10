@@ -23,7 +23,6 @@
     "firebase": "^7.2.1",
     "firebase-admin": "^8.7.0",
     "google-auth-library": "^5.4.1",
-    "google-spreadsheet": "^2.0.8",
     "googleapis": "^43.0.0",
     "react": "16.8.3",
     "react-dom": "^16.8.6",
