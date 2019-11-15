@@ -4,10 +4,10 @@
     "slug": "bdd",
     "privacy": "public",
     "sdkVersion": "34.0.0",
-    "platforms": ["ios", "android", "web"],
-    "version": "1.0.0",
+    "platforms": ["ios"],
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/180x180-BDD.png",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
