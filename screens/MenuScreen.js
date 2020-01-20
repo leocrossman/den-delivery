@@ -20,7 +20,7 @@ export default function MenuScreen() {
         Friendly Bread{'\n'}
         {'\n'}
         <Text style={styles.bold}>Additions:{'\n'}</Text>
-        Pesto, Humus, Avocado, Extra Cheese{'\n'}
+        Pesto, Hummus, Avocado, Extra Cheese{'\n'}
         {'\n'}
         <Text style={styles.bold}>From the Grill:{'\n'}</Text>Bates Burger
         {'\n'}Bigcat Burger{'\n'}
