@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Bobcat Den Delivery",
+    "name": "BDD",
     "slug": "bdd",
     "scheme": "bdd",
     "privacy": "public",
@@ -8,9 +8,9 @@
     "platforms": ["ios"],
     "version": "1.0.2",
     "orientation": "portrait",
-    "icon": "./assets/images/180x180-BDD.png",
+    "icon": "./assets/images/LOGOS/180x180.png",
     "splash": {
-      "image": "./assets/images/1242-x-2436-BDD.png",
+      "image": "./assets/images/LOGOS/1242x2436.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#881124"
     },
